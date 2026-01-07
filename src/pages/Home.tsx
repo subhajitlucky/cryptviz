@@ -133,6 +133,29 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-20 bg-slate-100/50 dark:bg-slate-900/20 border-y border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">10+</div>
+              <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Visualizers</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">100%</div>
+              <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Open Source</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">Fast</div>
+              <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Real-time Engine</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">Free</div>
+              <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Always</div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

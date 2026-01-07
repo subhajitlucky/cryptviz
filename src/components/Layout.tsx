@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Shield, Terminal, BookOpen, Home } from 'lucide-react';
+import { Shield, Terminal, BookOpen, Home, Github } from 'lucide-react';
 import clsx from 'clsx';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -49,7 +49,18 @@ export const Layout: React.FC = () => {
               })}
             </nav>
             <div className="w-px h-6 bg-slate-200 dark:bg-slate-800" />
-            <ThemeToggle />
+            <div className="flex items-center space-x-2">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
