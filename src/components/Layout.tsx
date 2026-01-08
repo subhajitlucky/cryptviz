@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Shield, Terminal, BookOpen, Home, Github } from 'lucide-react';
+import { Shield, Github } from 'lucide-react';
 import clsx from 'clsx';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -8,9 +8,9 @@ export const Layout: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/learn', label: 'Learn', icon: BookOpen },
-    { path: '/playground', label: 'Playground', icon: Terminal },
+    { path: '/', label: 'Home' },
+    { path: '/learn', label: 'Learn' },
+    { path: '/playground', label: 'Playground' },
   ];
 
   return (
@@ -30,7 +30,6 @@ export const Layout: React.FC = () => {
             <nav className="flex items-center space-x-1">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
-                const Icon = item.icon;
                 return (
                   <Link
                     key={item.path}
@@ -42,7 +41,6 @@ export const Layout: React.FC = () => {
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                     )}
                   >
-                    <Icon className="w-4 h-4" />
                     <span className="hidden sm:inline">{item.label}</span>
                   </Link>
                 );

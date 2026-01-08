@@ -11,26 +11,25 @@ export interface Topic {
     analogy: string;
     keyPoints: string[];
   };
-  visualizerType: 'none' | 'hash-simple' | 'hash-props' | 'hash-vs-enc' | 'keys' | 'signature' | 'blockchain';
+  visualizerType: 'none' | 'intro' | 'hash-simple' | 'hash-props' | 'avalanche' | 'hash-vs-enc' | 'sig-concept' | 'pk-concept' | 'sig-vs-ver' | 'keys' | 'signature' | 'blockchain';
 }
 
 export const TOPICS: Topic[] = [
   {
     id: 'intro',
-    title: 'What is Cryptography?',
+    title: 'What is Cryptography',
     description: 'The science of securing communication.',
     icon: Shield,
     content: {
-      definition: "Cryptography is the practice of protecting information by transforming it (encrypting) into an unreadable format, called ciphertext. Only those who possess a secret key can decipher (or decrypt) the message into plain text.",
-      analogy: "Writing a letter in a language only you and your friend understand.",
+      definition: "At its core, cryptography is the art of writing secrets. It allows you to send a message that looks like nonsense to everyone except the person who has the 'key' to read it.",
+      analogy: "A secret decoder ring. You spin the ring (the key) to turn 'HELLO' into 'KHOOR'. Only someone with the same ring setting can read it.",
       keyPoints: [
-        "Confidentiality: Only authorized people can read it.",
-        "Integrity: The message hasn't been changed.",
-        "Authentication: Proving who sent the message.",
-        "Non-repudiation: The sender cannot deny sending it."
+        "Confidentiality: Keeping secrets secret.",
+        "Integrity: Ensuring no one changed the message.",
+        "Authentication: Knowing exactly who sent it."
       ]
     },
-    visualizerType: 'none'
+    visualizerType: 'intro'
   },
   {
     id: 'hashing',
@@ -50,32 +49,32 @@ export const TOPICS: Topic[] = [
   },
   {
     id: 'hash-properties',
-    title: 'Avalanche Effect',
+    title: 'Properties of Hash Functions',
     description: 'Why small changes matter.',
     icon: Search,
     content: {
-      definition: "A key property of cryptographic hashes where a tiny change in the input (like flipping one bit) results in a drastically different output.",
-      analogy: "A kaleidoscope. A tiny turn of the tube completely changes the entire pattern.",
+      definition: "A secure hash function has a special property called the 'Avalanche Effect'. This means if you change just ONE letter of your message, the entire hash fingerprint changes completely.",
+      analogy: "A kaleidoscope. If you turn the tube just 1 millimeter, the entire beautiful pattern completely rearranges itself into something unrecognizable.",
       keyPoints: [
-        "Unpredictable: You can't guess the output from the input.",
-        "Sensitive: Even a space or comma change alters everything.",
-        "Secure: Makes it impossible to reverse-engineer the input."
+        "Unpredictable: You can't guess the output.",
+        "Sensitive: Even a space or comma changes everything.",
+        "Irreversible: You can't turn the smoothie back into fruit."
       ]
     },
-    visualizerType: 'hash-props'
+    visualizerType: 'avalanche'
   },
   {
     id: 'hashing-vs-encryption',
-    title: 'Hashing vs. Encryption',
+    title: 'Hashing vs Encryption',
     description: 'One-way vs. Two-way security.',
     icon: ArrowLeftRight,
     content: {
-      definition: "Hashing is a one-way process used for integrity. Encryption is a two-way process used for confidentiality. You can't 'un-hash' a fingerprint, but you can 'de-crypt' a message.",
-      analogy: "Hashing is like making a smoothie (you can't turn the smoothie back into fruit). Encryption is like putting fruit in a locked box (you can get the fruit back if you have the key).",
+      definition: "Hashing is for verifying (is this the same?), while Encryption is for hiding (can you read this?). Hashing is one-way and requires no key. Encryption is two-way and MUST have a key to work.",
+      analogy: "Hashing is like making a fruit smoothie: you can't turn the smoothie back into fruit. Encryption is like putting fruit in a locked safe: you can get the fruit back if you have the key.",
       keyPoints: [
-        "Hashing: NO KEY required to create, NO WAY to reverse.",
-        "Encryption: KEY REQUIRED to lock and unlock.",
-        "Usage: Hashing for passwords/files, Encryption for messages."
+        "Hashing: Verification & Integrity (Passwords).",
+        "Encryption: Privacy & Confidentiality (Messages).",
+        "The Key: Only Encryption uses a key to reverse the process."
       ]
     },
     visualizerType: 'hash-vs-enc'
@@ -83,18 +82,18 @@ export const TOPICS: Topic[] = [
   {
     id: 'public-key',
     title: 'Public Key Cryptography',
-    description: 'Two keys are better than one.',
+    description: 'The foundation of modern identity.',
     icon: Key,
     content: {
-      definition: "Also known as asymmetric cryptography, this system uses pairs of keys: public keys (which may be shared) and private keys (known only to the owner).",
-      analogy: "A mailbox. Anyone can drop a letter in (encrypt with public key), but only the owner with the key can open it (decrypt with private key).",
+      definition: "Public Key Cryptography uses a mathematically linked pair of keys. Here is the golden rule: What one key locks, ONLY the other key can unlock.",
+      analogy: "A magic distinct-key lock. If you lock it with Key A (Public), only Key B (Private) opens it (Confidentiality). If you lock it with Key B (Private), only Key A (Public) opens it (Identity/Signing).",
       keyPoints: [
-        "Private Key: Must be kept secret.",
-        "Public Key: Can be shared with the world.",
-        "Mathematically Related: They work as a pair."
+        "Confidentiality: Encrypt with Public -> Decrypt with Private.",
+        "Identity (Signing): Encrypt with Private -> Decrypt/Verify with Public.",
+        "The Pair: You can never derive the Private Key from the Public Key."
       ]
     },
-    visualizerType: 'keys'
+    visualizerType: 'pk-concept'
   },
   {
     id: 'digital-signatures',
@@ -102,28 +101,44 @@ export const TOPICS: Topic[] = [
     description: 'Proving authenticity.',
     icon: FileSignature,
     content: {
-      definition: "A digital signature proves that a message came from a specific person and hasn't been tampered with. It combines hashing and private keys.",
-      analogy: "A wax seal on an envelope, stamped with a ring only YOU possess.",
+      definition: "Now that we have Private Keys, we can use them to 'sign' data. A digital signature is created by encrypting the message's hash with your Private Key.",
+      analogy: "The Wax Seal. You create a unique stamp (Signature) using your ring (Private Key). Anyone with your public info can check the stamp to prove it came from you and hasn't been broken.",
       keyPoints: [
-        "Authenticity: Confirms who sent it.",
-        "Integrity: Confirms content wasn't changed.",
-        "Non-repudiation: Sender can't deny it."
+        "Process: Hash(Message) + Private Key = Signature.",
+        "Verification: Signature + Public Key = Valid/Invalid.",
+        "Security: Proves origin and integrity simultaneously."
       ]
     },
-    visualizerType: 'signature'
+    visualizerType: 'sig-concept'
+  },
+  {
+    id: 'signing-vs-verification',
+    title: 'Signing vs Verification',
+    description: 'The distinct roles of key pairs.',
+    icon: FileSignature,
+    content: {
+      definition: "Signing and Verification are the two halves of a secure conversation. The Sender signs in private, and the Receiver verifies in public.",
+      analogy: "Signing is like writing a check with a secret pen. Verification is like a bank teller using a public light to check if the ink is genuine.",
+      keyPoints: [
+        "Signing: Uses the Private Key to create the proof.",
+        "Verification: Uses the Public Key to check the proof.",
+        "Tamper Detection: If even one bit changes, verification fails."
+      ]
+    },
+    visualizerType: 'sig-vs-ver'
   },
   {
     id: 'blockchain',
-    title: 'Why Blockchains?',
+    title: 'Why Blockchains Need Cryptography',
     description: 'Building trust without a middleman.',
     icon: Network,
     content: {
-      definition: "Blockchains use hashes to link blocks of data together (integrity) and digital signatures to authorize transactions (authenticity), creating a tamper-proof ledger.",
-      analogy: "A public notary notebook where every page references the previous page's fingerprint, and every entry is signed by the author.",
+      definition: "Blockchains use Hashes to link blocks together in a specific order. Each block contains the 'fingerprint' of the one before it. If you change a block in the past, the fingerprints no longer match, breaking the chain.",
+      analogy: "A public notary book where every page starts by summarizing the page before it. If you rip out or change a page in the middle, the summaries on the following pages won't match anymore.",
       keyPoints: [
-        "Immutable: Can't change history without breaking the chain.",
-        "Decentralized: No single authority needed.",
-        "Trustless: Math provides the trust."
+        "Hashed Linking: Block B points to the hash of Block A.",
+        "Immutability: You can't change history without breaking the future.",
+        "Distributed Trust: Math, not people, ensures the ledger is honest."
       ]
     },
     visualizerType: 'blockchain'

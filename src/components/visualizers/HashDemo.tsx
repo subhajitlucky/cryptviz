@@ -22,6 +22,9 @@ export const HashDemo: React.FC = () => {
     compute();
   }, [input]);
 
+  // Generate a color from the hash (use first 6 chars)
+  const hashColor = hash ? `#${hash.substring(0, 6)}` : '#e2e8f0';
+
   const renderHash = () => {
     if (!hash) return null;
     return (
@@ -96,21 +99,39 @@ export const HashDemo: React.FC = () => {
              </div>
         )}
 
-        {/* Input Section */}
-        <div>
-          <label className="block text-sm font-bold text-slate-700 dark:text-slate-400 mb-2">Input Data</label>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-full h-24 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-brand-500 focus:border-indigo-500 transition-all resize-none font-mono shadow-inner"
-            placeholder="Type anything here..."
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {/* Input Section */}
+            <div className="md:col-span-3">
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-400 mb-2">Input Data (Your "Ingredients")</label>
+            <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="w-full h-32 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-brand-500 focus:border-indigo-500 transition-all resize-none font-mono shadow-inner"
+                placeholder="Type anything here..."
+            />
+            </div>
+
+            {/* Visual Identity (Color Hash) */}
+            <div className="md:col-span-1 flex flex-col">
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Unique Identity</label>
+                <div 
+                    className="flex-grow rounded-lg shadow-inner border border-slate-200 dark:border-slate-800 transition-colors duration-300 flex items-center justify-center relative group"
+                    style={{ backgroundColor: hashColor }}
+                >
+                    <div className="bg-white/90 dark:bg-slate-900/90 p-2 rounded text-[10px] font-mono font-bold opacity-0 group-hover:opacity-100 transition-opacity absolute">
+                        {hashColor}
+                    </div>
+                </div>
+                <p className="text-[10px] text-slate-400 mt-2 text-center leading-tight">
+                    This color is unique to your text. Change one letter, get a new color!
+                </p>
+            </div>
         </div>
 
         {/* Output Section */}
         <div>
           <div className="flex justify-between items-end mb-2">
-            <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Hash Output (Fixed Size)</label>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Hash Output (The "Fingerprint")</label>
             <span className="text-xs text-slate-500 font-medium">{hash.length * 4} bits</span>
           </div>
           

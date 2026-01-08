@@ -5,6 +5,11 @@ import { HashDemo } from '../components/visualizers/HashDemo';
 import { SignVerifyDemo } from '../components/visualizers/SignVerifyDemo';
 import { BlockchainDemo } from '../components/visualizers/BlockchainDemo';
 import { HashVsEncryption } from '../components/visualizers/HashVsEncryption';
+import { CaesarCipherDemo } from '../components/visualizers/CaesarCipherDemo';
+import { AvalancheDemo } from '../components/visualizers/AvalancheDemo';
+import { DigitalSignatureVisualizer } from '../components/visualizers/DigitalSignatureVisualizer';
+import { PublicKeyDemo } from '../components/visualizers/PublicKeyDemo';
+import { SignVerifyVisualizer } from '../components/visualizers/SignVerifyVisualizer';
 import { ArrowLeft, ArrowRight, BookOpen, Activity } from 'lucide-react';
 
 export const TopicPage: React.FC = () => {
@@ -20,6 +25,16 @@ export const TopicPage: React.FC = () => {
 
   const renderVisualizer = () => {
     switch (topic.visualizerType) {
+      case 'intro':
+        return <CaesarCipherDemo />;
+      case 'avalanche':
+        return <AvalancheDemo />;
+      case 'sig-concept':
+        return <DigitalSignatureVisualizer />;
+      case 'pk-concept':
+        return <PublicKeyDemo />;
+      case 'sig-vs-ver':
+        return <SignVerifyVisualizer />;
       case 'hash-simple':
       case 'hash-props':
         return <HashDemo />;
