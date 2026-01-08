@@ -10,6 +10,7 @@ export interface Topic {
     definition: string;
     analogy: string;
     keyPoints: string[];
+    realWorldUsage: string;
   };
   visualizerType: 'none' | 'intro' | 'hash-simple' | 'hash-props' | 'avalanche' | 'hash-vs-enc' | 'sig-concept' | 'pk-concept' | 'sig-vs-ver' | 'keys' | 'signature' | 'blockchain';
 }
@@ -18,16 +19,17 @@ export const TOPICS: Topic[] = [
   {
     id: 'intro',
     title: 'What is Cryptography',
-    description: 'The science of securing communication.',
+    description: 'The science of digital secrets.',
     icon: Shield,
     content: {
-      definition: "At its core, cryptography is the art of writing secrets. It allows you to send a message that looks like nonsense to everyone except the person who has the 'key' to read it.",
-      analogy: "A secret decoder ring. You spin the ring (the key) to turn 'HELLO' into 'KHOOR'. Only someone with the same ring setting can read it.",
+      definition: "At its core, cryptography is the art of transforming information so it's only readable by the intended recipient. It is the invisible shield that protects your bank balance, your private messages, and your digital identity.",
+      analogy: "A magic envelope. Anyone can see the envelope exists, but only the person with the correct magic key can make the text inside appear.",
       keyPoints: [
-        "Confidentiality: Keeping secrets secret.",
-        "Integrity: Ensuring no one changed the message.",
-        "Authentication: Knowing exactly who sent it."
-      ]
+        "Confidentiality: Only authorized eyes can read the data.",
+        "Integrity: Proof that the data wasn't changed in transit.",
+        "Authentication: Proof of exactly who sent the message."
+      ],
+      realWorldUsage: "Every time you see the 'Padlock' icon in your browser (HTTPS), cryptography is working to keep your credit card and passwords safe from hackers."
     },
     visualizerType: 'intro'
   },
@@ -37,29 +39,31 @@ export const TOPICS: Topic[] = [
     description: 'The digital fingerprint of data.',
     icon: Hash,
     content: {
-      definition: "A hash function takes input data of any size and converts it into a fixed-size string of characters, which is typically a digest that is unique to the data being hashed.",
-      analogy: "A fingerprint. A person (data) is complex, but their fingerprint (hash) is small and unique to them.",
+      definition: "A hash function is a one-way mathematical algorithm that turns any amount of data into a unique, fixed-size string of characters. No matter how large the input, the output (the hash) is always the same length.",
+      analogy: "A digital smoothie. You can turn fruit into a smoothie, but you can't look at the smoothie and turn it back into the original fruit.",
       keyPoints: [
-        "Deterministic: Same input always equals same output.",
-        "Fast: Quick to compute.",
-        "Fixed Size: Output length is always the same (e.g., 256 bits)."
-      ]
+        "Deterministic: Same input always results in the same output.",
+        "Fixed-Size: A single letter or a whole book results in a fixed-length string.",
+        "Collision Resistant: It's nearly impossible for two different inputs to have the same hash."
+      ],
+      realWorldUsage: "Companies like Google and Facebook don't store your actual password. They store a 'Hash' of it. When you log in, they hash your entry and see if it matches the stored fingerprint."
     },
     visualizerType: 'hash-simple'
   },
   {
     id: 'hash-properties',
     title: 'Properties of Hash Functions',
-    description: 'Why small changes matter.',
+    description: 'Why tiny changes break everything.',
     icon: Search,
     content: {
-      definition: "A secure hash function has a special property called the 'Avalanche Effect'. This means if you change just ONE letter of your message, the entire hash fingerprint changes completely.",
-      analogy: "A kaleidoscope. If you turn the tube just 1 millimeter, the entire beautiful pattern completely rearranges itself into something unrecognizable.",
+      definition: "Cryptographic hashes have a unique property called the 'Avalanche Effect'. If you change just a single bit of the input, the resulting hash changes so drastically that it appears completely unrelated to the original.",
+      analogy: "A house of cards. If you nudge just one card at the bottom, the entire structure collapses and looks nothing like it did before.",
       keyPoints: [
-        "Unpredictable: You can't guess the output.",
-        "Sensitive: Even a space or comma changes everything.",
-        "Irreversible: You can't turn the smoothie back into fruit."
-      ]
+        "Unpredictability: You cannot guess the output based on the input.",
+        "Sensitivity: Even adding a single space changes the entire fingerprint.",
+        "Integrity Check: This makes it easy to spot if data has been tampered with."
+      ],
+      realWorldUsage: "When you download a large file (like a video game), your computer checks the 'Checksum' (a hash) to make sure not a single byte was corrupted during the download."
     },
     visualizerType: 'avalanche'
   },
@@ -69,13 +73,14 @@ export const TOPICS: Topic[] = [
     description: 'One-way vs. Two-way security.',
     icon: ArrowLeftRight,
     content: {
-      definition: "Hashing is for verifying (is this the same?), while Encryption is for hiding (can you read this?). Hashing is one-way and requires no key. Encryption is two-way and MUST have a key to work.",
-      analogy: "Hashing is like making a fruit smoothie: you can't turn the smoothie back into fruit. Encryption is like putting fruit in a locked safe: you can get the fruit back if you have the key.",
+      definition: "Hashing is for verifying identity (One-Way), while Encryption is for hiding conversations (Two-Way). Hashing is like a seal; Encryption is like a safe.",
+      analogy: "Hashing is like taking a fingerprint: you can check if it matches, but you can't 'grow' a human from it. Encryption is like putting a letter in a locked box: you can get the letter back if you have the key.",
       keyPoints: [
-        "Hashing: Verification & Integrity (Passwords).",
-        "Encryption: Privacy & Confidentiality (Messages).",
-        "The Key: Only Encryption uses a key to reverse the process."
-      ]
+        "Usage: Hashing for passwords/files; Encryption for private messages.",
+        "The Key: Hashing requires NO key; Encryption MUST have a key.",
+        "Reversibility: Hashing is permanent; Encryption is reversible."
+      ],
+      realWorldUsage: "Use Hashing when you need to prove you know a secret without revealing it. Use Encryption when you need to send a secret to someone else."
     },
     visualizerType: 'hash-vs-enc'
   },
@@ -85,13 +90,14 @@ export const TOPICS: Topic[] = [
     description: 'The foundation of modern identity.',
     icon: Key,
     content: {
-      definition: "Public Key Cryptography uses a mathematically linked pair of keys. Here is the golden rule: What one key locks, ONLY the other key can unlock.",
-      analogy: "A magic distinct-key lock. If you lock it with Key A (Public), only Key B (Private) opens it (Confidentiality). If you lock it with Key B (Private), only Key A (Public) opens it (Identity/Signing).",
+      definition: "Public Key Cryptography uses a mathematically linked pair of keys: a Public Key (which you share) and a Private Key (which you keep secret). What one key locks, only the other can unlock.",
+      analogy: "A mailbox with a slot. Anyone can drop a letter in (Public Key), but only you have the key to open the back and read the mail (Private Key).",
       keyPoints: [
-        "Confidentiality: Encrypt with Public -> Decrypt with Private.",
-        "Identity (Signing): Encrypt with Private -> Decrypt/Verify with Public.",
-        "The Pair: You can never derive the Private Key from the Public Key."
-      ]
+        "Public Key: Like your email address or home address.",
+        "Private Key: Like your house key or password. NEVER share it.",
+        "The Magic: You can derive the Public key from the Private, but never the other way around."
+      ],
+      realWorldUsage: "This powers the entire internet. When you connect to Amazon, your browser uses Amazon's Public Key to lock your data so only Amazon's Private Key can open it."
     },
     visualizerType: 'pk-concept'
   },
@@ -101,13 +107,14 @@ export const TOPICS: Topic[] = [
     description: 'Proving authenticity.',
     icon: FileSignature,
     content: {
-      definition: "Now that we have Private Keys, we can use them to 'sign' data. A digital signature is created by encrypting the message's hash with your Private Key.",
-      analogy: "The Wax Seal. You create a unique stamp (Signature) using your ring (Private Key). Anyone with your public info can check the stamp to prove it came from you and hasn't been broken.",
+      definition: "A digital signature is a mathematical proof of origin. To create one, you take a hash of your message and encrypt that small hash with your Private Key. This 'signs' the data without revealing your secret.",
+      analogy: "The Wax Seal. You use your unique signet ring (Private Key) to leave a mark. Anyone can look at the mark and know it's yours, but they can't recreate it without your ring.",
       keyPoints: [
-        "Process: Hash(Message) + Private Key = Signature.",
-        "Verification: Signature + Public Key = Valid/Invalid.",
-        "Security: Proves origin and integrity simultaneously."
-      ]
+        "Non-Repudiation: The sender cannot deny sending the message.",
+        "Efficiency: We sign the small 'hash' instead of the big 'file' for speed.",
+        "Tamper-Proof: If the message changes, the signature immediately becomes invalid."
+      ],
+      realWorldUsage: "Software updates use digital signatures. Your computer only installs an update if it has a valid signature from Apple or Microsoft, proving it's not a virus."
     },
     visualizerType: 'sig-concept'
   },
@@ -117,29 +124,31 @@ export const TOPICS: Topic[] = [
     description: 'The distinct roles of key pairs.',
     icon: FileSignature,
     content: {
-      definition: "Signing and Verification are the two halves of a secure conversation. The Sender signs in private, and the Receiver verifies in public.",
-      analogy: "Signing is like writing a check with a secret pen. Verification is like a bank teller using a public light to check if the ink is genuine.",
+      definition: "Signing and Verification are two halves of the same coin. The Sender uses their Private Key to 'Lock' the identity, and the Receiver uses the Sender's Public Key to 'Unlock' and confirm it.",
+      analogy: "Signing is like writing a check with a secret pen. Verification is like a bank teller using a special light to prove the signature is genuine.",
       keyPoints: [
-        "Signing: Uses the Private Key to create the proof.",
-        "Verification: Uses the Public Key to check the proof.",
-        "Tamper Detection: If even one bit changes, verification fails."
-      ]
+        "Signing: Hash(Data) + Private Key = Signature.",
+        "Verification: Signature + Public Key = Original Hash.",
+        "Final Check: If the 'Verified Hash' matches the 'Received Data Hash', it's valid."
+      ],
+      realWorldUsage: "In Bitcoin, when you 'Send BTC', you are actually providing a Digital Signature. Miners verify your signature using your Public Key to authorize the move."
     },
     visualizerType: 'sig-vs-ver'
   },
   {
     id: 'blockchain',
     title: 'Why Blockchains Need Cryptography',
-    description: 'Building trust without a middleman.',
+    description: 'Building trust without middlemen.',
     icon: Network,
     content: {
-      definition: "Blockchains use Hashes to link blocks together in a specific order. Each block contains the 'fingerprint' of the one before it. If you change a block in the past, the fingerprints no longer match, breaking the chain.",
-      analogy: "A public notary book where every page starts by summarizing the page before it. If you rip out or change a page in the middle, the summaries on the following pages won't match anymore.",
+      definition: "Blockchains use hashes to link blocks into an unbreakable chain and digital signatures to authorize moves. It's a ledger where history is protected by math rather than by a bank or government.",
+      analogy: "A public book where every page starts by summarizing the page before it. If you change a single word on page 1, the summaries on all 1,000 following pages will no longer match.",
       keyPoints: [
-        "Hashed Linking: Block B points to the hash of Block A.",
-        "Immutability: You can't change history without breaking the future.",
-        "Distributed Trust: Math, not people, ensures the ledger is honest."
-      ]
+        "Hashed Linking: Block N contains the hash of Block N-1.",
+        "Immutability: You can't rewrite history without breaking the future.",
+        "Trustless: We don't need to trust people; we trust the math."
+      ],
+      realWorldUsage: "Cryptocurrencies like Ethereum use these links to ensure that once a transaction is recorded, it can never be deleted or modified by anyone."
     },
     visualizerType: 'blockchain'
   }

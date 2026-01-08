@@ -34,10 +34,17 @@ export default {
         }
       },
       fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 8s linear infinite',
+      },
+      boxShadow: {
+        'glow-brand': '0 0 20px -5px rgba(14, 165, 233, 0.3)',
+        'glow-indigo': '0 0 20px -5px rgba(99, 102, 241, 0.3)',
+        'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.3)',
       }
     },
   },

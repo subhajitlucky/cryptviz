@@ -2,63 +2,26 @@ import React, { useState } from 'react';
 import { generateKeyPair } from '../../utils/crypto';
 import type { KeyPair } from '../../utils/crypto';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Key, Lock, Unlock, PenTool, ArrowRight, FileText, RefreshCw, ChevronRight, Check, ShieldCheck } from 'lucide-react';
+import { User, Key, Lock, Unlock, PenTool, ArrowRight, FileText, RefreshCw, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 
 // --- Components ---
 
-const ActorCard = ({ name, role, keys, onGenKeys, isActive }: { name: string, role: string, keys: KeyPair | null, onGenKeys: () => void, isActive: boolean }) => (
-  <div className={clsx(
-    "p-4 rounded-xl border-2 transition-all duration-300",
-    isActive 
-        ? "bg-white dark:bg-slate-900 border-indigo-500 shadow-lg scale-105 z-10" 
-        : "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-60"
-  )}>
-    <div className="flex items-center justify-between mb-3">
-      <div className="flex items-center gap-2">
-        <div className={clsx("p-1.5 rounded-full", isActive ? "bg-indigo-600 text-white" : "bg-slate-200 dark:bg-slate-800 text-slate-500")}>
-          <User className="w-4 h-4" />
+const KeyIcon = ({ type, owner, color }: { type: 'public' | 'private', owner: string, color: string }) => (
+    <div className={clsx("flex flex-col items-center gap-1", color)}>
+        <div className={clsx("p-2 rounded-lg border-2 bg-white dark:bg-slate-900 shadow-sm", color.replace('text-', 'border-'))}>
+            {type === 'private' ? <Key className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
         </div>
-        <div>
-           <h3 className="font-bold text-sm text-slate-900 dark:text-white">{name}</h3>
-           <span className="text-[10px] text-slate-500 uppercase font-bold">{role}</span>
-        </div>
-      </div>
-      <button onClick={onGenKeys} className="text-[10px] bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-2 py-1 rounded font-bold transition-colors">
-          {keys ? 'Reset' : 'Keys'}
-      </button>
+        <span className="text-[10px] font-black uppercase">{owner} {type === 'private' ? 'Priv' : 'Pub'}</span>
     </div>
-
-    {keys && (
-        <div className="grid grid-cols-2 gap-2">
-            <div className="p-1.5 bg-rose-50 dark:bg-rose-900/20 rounded border border-rose-100 dark:border-rose-900/30">
-                <div className="flex items-center gap-1 mb-0.5">
-                    <Key className="w-2.5 h-2.5 text-rose-500" />
-                    <span className="text-[8px] font-bold text-rose-700 dark:text-rose-400 uppercase">Private</span>
-                </div>
-                <div className="text-[9px] text-rose-600 dark:text-rose-300 truncate font-mono">{keys.privateKeyHex}</div>
-            </div>
-            <div className="p-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/30">
-                 <div className="flex items-center gap-1 mb-0.5">
-                    <Unlock className="w-2.5 h-2.5 text-emerald-500" />
-                    <span className="text-[8px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">Public</span>
-                </div>
-                <div className="text-[9px] text-emerald-600 dark:text-emerald-300 truncate font-mono">{keys.publicKeyHex}</div>
-            </div>
-        </div>
-    )}
-  </div>
 );
-
-// --- Main Visualizer ---
 
 export const EncryptionFlow: React.FC = () => {
   const [aliceKeys, setAliceKeys] = useState<KeyPair | null>(null);
   const [bobKeys, setBobKeys] = useState<KeyPair | null>(null);
   
-  // Stages: 0: Draft, 1: Signing, 2: Encrypting, 3: Transmitting, 4: Decrypting, 5: Verifying
-  const [stage, setStage] = useState(0); 
-  const [isAnimating, setIsAnimating] = useState(false);
+  // 0: Setup, 1: Sign, 2: Encrypt, 3: Transmit, 4: Decrypt, 5: Verify
+  const [step, setStep] = useState(0);
 
   const handleGenKeys = async (actor: 'alice' | 'bob') => {
       const k = await generateKeyPair();
@@ -66,234 +29,262 @@ export const EncryptionFlow: React.FC = () => {
       else setBobKeys(k);
   };
 
-  const stages = [
-    { id: 0, label: "Draft", desc: "Alice writes the raw message." },
-    { id: 1, label: "Sign", desc: "Alice uses HER PRIVATE KEY to seal the document." },
-    { id: 2, label: "Encrypt", desc: "Alice uses BOB'S PUBLIC KEY to lock the package." },
-    { id: 3, label: "Transmit", desc: "The encrypted package is sent over the network." },
-    { id: 4, label: "Decrypt", desc: "Bob uses HIS PRIVATE KEY to open the lock." },
-    { id: 5, label: "Verify", desc: "Bob uses ALICE'S PUBLIC KEY to check the seal." },
-  ];
-
-  const triggerNext = () => {
-      if (isAnimating) return;
-      setIsAnimating(true);
-      setTimeout(() => {
-          setStage(prev => (prev + 1) % 6);
-          setIsAnimating(false);
-      }, 1200);
+  const nextStep = () => {
+      setStep(prev => (prev + 1) % 6);
   };
 
+  const reset = () => {
+      setStep(0);
+  };
+
+  // Helper to check if keys are ready
+  const ready = aliceKeys && bobKeys;
+
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
+    <div className="w-full max-w-6xl mx-auto space-y-12">
       
-      {/* Header Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-start gap-4">
-              <div className="p-2 bg-indigo-600 rounded-lg text-white">
-                  <ShieldCheck className="w-5 h-5" />
+      {/* 1. SETUP PHASE */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* ALICE */}
+          <div className={clsx(
+              "p-6 rounded-3xl border-2 transition-all duration-500",
+              step <= 2 ? "bg-white dark:bg-slate-900 border-rose-200 dark:border-rose-900 shadow-xl" : "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-50"
+          )}>
+              <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/20 flex items-center justify-center text-rose-600">
+                          <User className="w-6 h-6" />
+                      </div>
+                      <div>
+                          <h3 className="font-bold text-slate-900 dark:text-white">Alice</h3>
+                          <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Sender</div>
+                      </div>
+                  </div>
+                  {!aliceKeys && <button onClick={() => handleGenKeys('alice')} className="px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold">Create Identity</button>}
               </div>
-              <div>
-                  <h4 className="font-bold text-indigo-900 dark:text-indigo-200">The Secure Messaging Pipeline</h4>
-                  <p className="text-sm text-indigo-700/80 dark:text-indigo-300/80 leading-relaxed">
-                      Combining <strong>Signatures</strong> and <strong>Encryption</strong> creates a tamper-proof, private communication channel.
-                  </p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center opacity-100">
+                      <div className="text-[10px] uppercase font-bold text-slate-400 mb-2">Signer</div>
+                      {aliceKeys ? <KeyIcon type="private" owner="Alice" color="text-rose-500" /> : <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800" />}
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center">
+                      <div className="text-[10px] uppercase font-bold text-slate-400 mb-2">Verifier</div>
+                      {aliceKeys ? <KeyIcon type="public" owner="Alice" color="text-rose-500" /> : <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800" />}
+                  </div>
               </div>
           </div>
 
-          <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/50 flex items-start gap-4">
-              <div className="p-2 bg-emerald-600 rounded-lg text-white font-bold text-xs uppercase">
-                  Logic
+          {/* BOB */}
+          <div className={clsx(
+              "p-6 rounded-3xl border-2 transition-all duration-500",
+              step >= 3 ? "bg-white dark:bg-slate-900 border-emerald-200 dark:border-emerald-900 shadow-xl" : "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-50"
+          )}>
+              <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600">
+                          <User className="w-6 h-6" />
+                      </div>
+                      <div>
+                          <h3 className="font-bold text-slate-900 dark:text-white">Bob</h3>
+                          <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Receiver</div>
+                      </div>
+                  </div>
+                  {!bobKeys && <button onClick={() => handleGenKeys('bob')} className="px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold">Create Identity</button>}
               </div>
-              <div>
-                  <h4 className="font-bold text-emerald-900 dark:text-emerald-200">User-Specific Ownership</h4>
-                  <p className="text-xs text-emerald-700/80 dark:text-emerald-300/80 leading-relaxed">
-                      Every pair is unique. <strong>What the Public Key locks, only the owner's Private Key can unlock.</strong> What the <strong>Private Key</strong> locks, anyone can verify with that owner's <strong>Public Key</strong>.
-                  </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center">
+                      <div className="text-[10px] uppercase font-bold text-slate-400 mb-2">Decrypter</div>
+                      {bobKeys ? <KeyIcon type="private" owner="Bob" color="text-emerald-500" /> : <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800" />}
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center">
+                      <div className="text-[10px] uppercase font-bold text-slate-400 mb-2">Encrypter</div>
+                      {bobKeys ? <KeyIcon type="public" owner="Bob" color="text-emerald-500" /> : <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800" />}
+                  </div>
               </div>
           </div>
       </div>
 
-      {/* Main Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+      {/* 2. THE STAGE */}
+      <div className="relative bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 min-h-[400px] flex flex-col items-center justify-center overflow-hidden shadow-2xl">
           
-          {/* Left: Actors */}
-          <div className="lg:col-span-1 space-y-4">
-              <ActorCard 
-                name="Alice" 
-                role="Sender" 
-                keys={aliceKeys} 
-                onGenKeys={() => handleGenKeys('alice')} 
-                isActive={stage <= 2}
-              />
-              <div className="h-12 flex items-center justify-center">
-                  <ArrowRight className="w-6 h-6 text-slate-300 rotate-90 lg:rotate-0" />
+          {/* Background Grid */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+          {/* Step Indicator */}
+          <div className="absolute top-6 left-0 w-full flex justify-center">
+              <div className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-full shadow-sm flex items-center gap-3">
+                  <span className={clsx("text-[10px] font-bold uppercase", step === 1 ? "text-rose-600" : "text-slate-300")}>1. Sign</span>
+                  <ArrowRight className="w-3 h-3 text-slate-300" />
+                  <span className={clsx("text-[10px] font-bold uppercase", step === 2 ? "text-emerald-600" : "text-slate-300")}>2. Encrypt</span>
+                  <ArrowRight className="w-3 h-3 text-slate-300" />
+                  <span className={clsx("text-[10px] font-bold uppercase", step === 3 ? "text-indigo-600" : "text-slate-300")}>3. Send</span>
+                  <ArrowRight className="w-3 h-3 text-slate-300" />
+                  <span className={clsx("text-[10px] font-bold uppercase", step === 4 ? "text-emerald-600" : "text-slate-300")}>4. Decrypt</span>
+                  <ArrowRight className="w-3 h-3 text-slate-300" />
+                  <span className={clsx("text-[10px] font-bold uppercase", step === 5 ? "text-rose-600" : "text-slate-300")}>5. Verify</span>
               </div>
-              <ActorCard 
-                name="Bob" 
-                role="Receiver" 
-                keys={bobKeys} 
-                onGenKeys={() => handleGenKeys('bob')} 
-                isActive={stage >= 4}
-              />
           </div>
 
-          {/* Center: The Document Visualizer */}
-          <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm min-h-[500px] flex flex-col relative overflow-hidden transition-colors duration-300">
-             
-             {/* Progress Bar */}
-             <div className="flex justify-between mb-8 relative px-4">
-                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-100 dark:bg-slate-800 -z-0 -translate-y-1/2" />
-                 {stages.map((s, idx) => (
-                     <div key={s.id} className="relative z-10 flex flex-col items-center">
-                         <div className={clsx(
-                             "w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-300",
-                             stage === idx ? "bg-indigo-600 border-indigo-600 text-white scale-125" :
-                             stage > idx ? "bg-emerald-500 border-emerald-500 text-white" :
-                             "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400"
-                         )}>
-                             {stage > idx ? <Check className="w-4 h-4" /> : <span className="text-xs font-bold">{idx + 1}</span>}
-                         </div>
-                         <span className={clsx(
-                             "text-[10px] font-bold mt-2 uppercase tracking-wider",
-                             stage === idx ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"
-                         )}>{s.label}</span>
-                     </div>
-                 ))}
-             </div>
+          {/* MAIN ANIMATION CONTAINER */}
+          <div className="relative z-10 w-full flex items-center justify-center h-64">
+              
+              {/* THE DATA PACKET */}
+              <AnimatePresence>
+                  <motion.div
+                    className="relative"
+                    initial={{ x: -200, opacity: 0 }}
+                    animate={{ 
+                        x: step === 3 ? 200 : step > 3 ? 0 : 0, 
+                        opacity: 1,
+                        scale: step === 3 ? 0.8 : 1
+                    }}
+                    transition={{ duration: 0.8, type: "spring" }}
+                  >
+                        {/* Outer Box (Encryption Layer) */}
+                        <motion.div 
+                            className={clsx(
+                                "w-64 h-48 rounded-2xl border-4 flex items-center justify-center relative transition-colors duration-500",
+                                step >= 2 && step <= 4 
+                                    ? "bg-slate-800 border-emerald-500 shadow-2xl" 
+                                    : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                            )}
+                        >
+                            {/* Inner Document (Message) */}
+                            {!(step >= 2 && step <= 4) && (
+                                <div className="flex flex-col items-center gap-2">
+                                    <FileText className="w-12 h-12 text-slate-300" />
+                                    <div className="text-center">
+                                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">"Secret Plans"</div>
+                                        <div className="text-[10px] text-slate-400">confidential.pdf</div>
+                                    </div>
+                                </div>
+                            )}
 
-             {/* The Content */}
-             <div className="flex-grow flex flex-col items-center justify-center">
-                
-                {/* Visual Representation of the Package */}
-                <div className="relative">
-                    
-                    {/* THE DOCUMENT (msg.txt) */}
-                    <motion.div 
-                        animate={{ 
-                            scale: stage === 3 ? 0.6 : 1,
-                            opacity: (stage === 3) ? 0.5 : 1,
-                            filter: stage === 2 || stage === 3 ? "blur(4px)" : "blur(0px)"
-                        }}
-                        className={clsx(
-                            "w-48 h-64 rounded-lg shadow-xl border-2 flex flex-col p-4 transition-colors duration-500",
-                            "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600"
-                        )}
-                    >
-                        <div className="flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
-                             <FileText className="w-5 h-5 text-slate-400" />
-                             <span className="text-[10px] font-bold text-slate-500 font-mono">msg.txt</span>
-                        </div>
-                        
-                        <div className="space-y-3 flex-grow">
-                            <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded w-full"></div>
-                            <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded w-full"></div>
-                            <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded w-3/4"></div>
-                            <div className="pt-4 text-center">
-                                <p className="text-sm font-bold text-slate-800 dark:text-slate-100">"Hello Bob!"</p>
-                            </div>
-                        </div>
-
-                        {/* Signature Seal Visual */}
-                        <AnimatePresence>
-                            {(stage === 1 || stage === 2 || stage === 5) && (
+                            {/* SIGNATURE STAMP (Alice's Seal) */}
+                            {step >= 1 && (
                                 <motion.div 
                                     initial={{ scale: 2, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
-                                    exit={{ scale: 0.5, opacity: 0 }}
-                                    className="mt-auto flex flex-col items-center border-t border-rose-100 dark:border-rose-900/50 pt-2"
+                                    className="absolute bottom-4 right-4"
                                 >
-                                    <PenTool className="w-5 h-5 text-rose-500 mb-1" />
-                                    <div className="text-[8px] font-bold text-rose-600 uppercase tracking-widest">Alice's Seal</div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-10 h-10 rounded-full bg-rose-600 border-2 border-rose-400 text-white flex items-center justify-center shadow-lg">
+                                            <PenTool className="w-5 h-5" />
+                                        </div>
+                                        {step === 1 && (
+                                            <motion.div initial={{y:5, opacity:0}} animate={{y:0, opacity:1}} className="absolute top-12 whitespace-nowrap bg-rose-100 text-rose-700 text-[9px] font-bold px-2 py-1 rounded shadow-sm">
+                                                Signed by Alice
+                                            </motion.div>
+                                        )}
+                                    </div>
                                 </motion.div>
                             )}
-                        </AnimatePresence>
-                    </motion.div>
 
-                    {/* ENCRYPTION VAULT (Stage 2 & 3) */}
-                    <AnimatePresence>
-                        {(stage === 2 || stage === 3) && (
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 1.5 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="absolute inset-0 -m-4 bg-slate-900/90 dark:bg-slate-950/90 rounded-2xl border-4 border-emerald-500 flex flex-col items-center justify-center shadow-2xl z-20 backdrop-blur-sm"
-                            >
-                                <Lock className="w-16 h-16 text-emerald-500 mb-2 animate-pulse" />
-                                <div className="text-white font-black text-xl tracking-tighter uppercase">Encrypted</div>
-                                <div className="text-emerald-500 text-[10px] font-mono mt-1">Locked with Bob's PubKey</div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* TRANSMISSION EFFECT (Stage 3) */}
-                    <AnimatePresence>
-                        {stage === 3 && (
-                            <motion.div 
-                                animate={{ x: [0, 10, -10, 0], opacity: [0.5, 1, 0.5] }}
-                                transition={{ repeat: Infinity, duration: 0.5 }}
-                                className="absolute top-1/2 left-full ml-8 flex flex-col items-center gap-2"
-                            >
-                                <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-transparent rounded-full" />
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Transmitting...</span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* FINAL VERIFICATION STAMP */}
-                    <AnimatePresence>
-                        {stage === 5 && (
-                            <motion.div 
-                                initial={{ scale: 5, opacity: 0, rotate: 20 }}
-                                animate={{ scale: 1, opacity: 1, rotate: -15 }}
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
-                            >
-                                <div className="border-8 border-emerald-500/50 bg-white/40 backdrop-blur-sm text-emerald-600 px-6 py-3 rounded-2xl font-black text-3xl uppercase tracking-tighter shadow-2xl">
-                                    Authentic
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                </div>
-
-                {/* Explanation Text */}
-                <div className="mt-12 text-center max-w-md mx-auto">
-                    <h5 className="font-bold text-slate-900 dark:text-white mb-2">{stages[stage].label} Phase</h5>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                        {stages[stage].desc}
-                    </p>
-                </div>
-
-                {/* Action Trigger */}
-                <div className="mt-8 flex flex-col items-center gap-4">
-                     {(!aliceKeys || !bobKeys) ? (
-                         <p className="text-xs text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/30 px-4 py-2 rounded-full border border-rose-200 dark:border-rose-900">
-                             Wait! Generate keys for both Alice & Bob first.
-                         </p>
-                     ) : (
-                        <button 
-                            onClick={triggerNext}
-                            disabled={isAnimating}
-                            className={clsx(
-                                "group px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center gap-3 shadow-xl",
-                                stage === 5 ? "bg-slate-800 text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                            {/* ENCRYPTION LOCK (Bob's Lock) */}
+                            {step >= 2 && step <= 4 && (
+                                <motion.div 
+                                    initial={{ scale: 1.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0, opacity: 0 }}
+                                    className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 rounded-xl z-20 backdrop-blur-sm"
+                                >
+                                    <Lock className="w-16 h-16 text-emerald-500 mb-2" />
+                                    <div className="text-white text-xs font-black uppercase tracking-widest">Locked for Bob</div>
+                                    {step === 2 && (
+                                        <motion.div initial={{y:10, opacity:0}} animate={{y:0, opacity:1}} className="mt-2 bg-emerald-900/50 text-emerald-400 text-[9px] font-bold px-3 py-1 rounded border border-emerald-500/30">
+                                            Only Bob can open
+                                        </motion.div>
+                                    )}
+                                </motion.div>
                             )}
-                        >
-                            {isAnimating ? (
-                                <RefreshCw className="w-5 h-5 animate-spin" />
-                            ) : stage === 5 ? (
-                                <RefreshCw className="w-5 h-5" />
-                            ) : (
-                                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+
+                            {/* VERIFICATION CHECK */}
+                            {step === 5 && (
+                                <motion.div 
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1, rotate: -10 }}
+                                    className="absolute top-4 left-4 border-4 border-emerald-500 text-emerald-500 px-4 py-2 rounded-xl text-xl font-black uppercase tracking-tighter opacity-80"
+                                >
+                                    Verified
+                                </motion.div>
                             )}
-                            {stage === 5 ? "Restart Simulation" : `Execute: ${stages[stage].label}`}
-                        </button>
-                     )}
-                </div>
-             </div>
+
+                        </motion.div>
+                  </motion.div>
+              </AnimatePresence>
+
+              {/* ACTION: KEYS FLYING IN */}
+              <AnimatePresence>
+                  {step === 1 && (
+                      <motion.div 
+                        initial={{ x: -300, y: 0, opacity: 0 }} animate={{ x: -140, opacity: 1 }} exit={{ x: -100, opacity: 0 }}
+                        className="absolute left-1/2 ml-[-100px] z-30 pointer-events-none"
+                      >
+                          <KeyIcon type="private" owner="Alice" color="text-rose-500" />
+                      </motion.div>
+                  )}
+                  {step === 2 && (
+                      <motion.div 
+                        initial={{ x: 300, y: 0, opacity: 0 }} animate={{ x: 140, opacity: 1 }} exit={{ x: 100, opacity: 0 }}
+                        className="absolute left-1/2 ml-[-100px] z-30 pointer-events-none"
+                      >
+                          <KeyIcon type="public" owner="Bob" color="text-emerald-500" />
+                      </motion.div>
+                  )}
+                  {step === 4 && (
+                      <motion.div 
+                        initial={{ x: 300, y: 0, opacity: 0 }} animate={{ x: 140, opacity: 1 }} exit={{ x: 100, opacity: 0 }}
+                        className="absolute left-1/2 ml-[-100px] z-30 pointer-events-none"
+                      >
+                          <KeyIcon type="private" owner="Bob" color="text-emerald-500" />
+                      </motion.div>
+                  )}
+                  {step === 5 && (
+                      <motion.div 
+                        initial={{ x: -300, y: 0, opacity: 0 }} animate={{ x: -140, opacity: 1 }} exit={{ x: -100, opacity: 0 }}
+                        className="absolute left-1/2 ml-[-100px] z-30 pointer-events-none"
+                      >
+                          <KeyIcon type="public" owner="Alice" color="text-rose-500" />
+                      </motion.div>
+                  )}
+              </AnimatePresence>
 
           </div>
+
+          {/* 3. EXPLANATION & CONTROL */}
+          <div className="w-full max-w-md mx-auto mt-8 text-center">
+              <div className="bg-slate-100 dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 mb-6 min-h-[100px] flex items-center justify-center">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {step === 0 && "Alice wants to send a secret document to Bob. She also wants to prove it's from her."}
+                      {step === 1 && "Alice signs the document with her PRIVATE Key. This creates a unique 'wax seal' that proves origin."}
+                      {step === 2 && "Alice encrypts the result with Bob's PUBLIC Key. Now it's a locked box only Bob can open."}
+                      {step === 3 && "The encrypted package travels safely over the public internet. Hackers see only gibberish."}
+                      {step === 4 && "Bob receives the package. He uses his PRIVATE Key to unlock the encryption."}
+                      {step === 5 && "Bob sees the document and Alice's seal. He checks the seal with Alice's PUBLIC Key. It matches!"}
+                  </p>
+              </div>
+
+              {!ready ? (
+                  <div className="text-rose-500 text-xs font-bold animate-pulse">
+                      Please generate identity keys for both Alice and Bob above.
+                  </div>
+              ) : (
+                  <div className="flex justify-center gap-4">
+                      {step < 5 ? (
+                          <button onClick={nextStep} className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+                              Next Step <ChevronRight className="w-4 h-4" />
+                          </button>
+                      ) : (
+                          <button onClick={reset} className="px-8 py-3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-300 dark:hover:bg-slate-700">
+                              <RefreshCw className="w-4 h-4" /> Reset Simulation
+                          </button>
+                      )}
+                  </div>
+              )}
+          </div>
+
       </div>
     </div>
   );
