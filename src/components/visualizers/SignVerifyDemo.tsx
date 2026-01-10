@@ -5,8 +5,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Key, PenTool, ShieldCheck, AlertTriangle, Lock, Unlock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import clsx from 'clsx';
 
+interface Coords {
+    x: number;
+    y: number;
+}
+
+interface Packet {
+    id: number;
+    from: Coords;
+    to: Coords;
+    color: string;
+    delay?: number;
+}
+
 // Simple component for animated data packet
-const DataPacket = ({ from, to, delay = 0, color = "bg-brand-500", onComplete }: any) => {
+const DataPacket = ({ from, to, delay = 0, color = "bg-brand-500", onComplete }: { from: Coords, to: Coords, delay?: number, color?: string, onComplete: () => void }) => {
     return (
         <motion.div
             initial={{ left: from.x, top: from.y, opacity: 1, scale: 0 }}
@@ -27,7 +40,7 @@ export const SignVerifyDemo: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   
   // Animation States
-  const [packets, setPackets] = useState<any[]>([]);
+  const [packets, setPackets] = useState<Packet[]>([]);
   
   // Refs for coordinate tracking
   const containerRef = useRef<HTMLDivElement>(null);

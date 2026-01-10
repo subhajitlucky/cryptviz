@@ -29,7 +29,7 @@ export const Playground: React.FC = () => {
     { id: 'transaction', label: 'Signing', icon: PenTool, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
     { id: 'encryption', label: 'Messaging', icon: Lock, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { id: 'blockchain', label: 'Ledger', icon: Link2, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-  ];
+  ] as const;
 
   return (
     <div className="relative min-h-screen flex flex-col pb-20 overflow-hidden">
@@ -40,7 +40,7 @@ export const Playground: React.FC = () => {
         {/* Header Section */}
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 backdrop-blur-md text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-4">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 backdrop-blur-md text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest mb-10">
               <FlaskConical className="w-3 h-3" />
               <span>Research Sandbox v1.0</span>
             </div>
@@ -58,7 +58,7 @@ export const Playground: React.FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id)}
                   className={clsx(
                     "relative px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center gap-2",
                     isActive 

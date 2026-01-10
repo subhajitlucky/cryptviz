@@ -14,8 +14,10 @@ export const HashDemo: React.FC = () => {
   useEffect(() => {
     const compute = async () => {
       const h = await sha256(input);
-      setPrevHash(hash);
-      setHash(h);
+      setHash(currentHash => {
+        setPrevHash(currentHash);
+        return h;
+      });
       setIsChanging(true);
       setTimeout(() => setIsChanging(false), 300);
     };

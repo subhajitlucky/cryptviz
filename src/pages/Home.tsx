@@ -45,7 +45,17 @@ const BackgroundAtmosphere = () => (
   </div>
 );
 
-const BentoCard = ({ icon: Icon, title, desc, delay, className, color, to }: any) => (
+interface BentoCardProps {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+  delay: number;
+  className?: string;
+  color: string;
+  to: string;
+}
+
+const BentoCard = ({ icon: Icon, title, desc, delay, className, color, to }: BentoCardProps) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}

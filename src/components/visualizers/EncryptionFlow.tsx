@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { generateKeyPair } from '../../utils/crypto';
 import type { KeyPair } from '../../utils/crypto';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Key, Lock, Unlock, PenTool, ArrowRight, ArrowDown, FileText, RefreshCw, ChevronRight, ShieldCheck } from 'lucide-react';
+import { User, Key, Lock, Unlock, PenTool, ArrowRight, FileText, RefreshCw, ChevronRight, ShieldCheck } from 'lucide-react';
 import clsx from 'clsx';
 
 // --- Components ---

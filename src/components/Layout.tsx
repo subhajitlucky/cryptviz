@@ -17,11 +17,6 @@ export const Layout: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location]);
-
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -48,7 +43,7 @@ export const Layout: React.FC = () => {
       <header className="sticky top-0 z-[100] w-full border-b border-slate-200/50 dark:border-white/10 bg-white/70 dark:bg-slate-950/80 backdrop-blur-2xl transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
-          <Link to="/" className="flex items-center space-x-3 group outline-none relative z-[110]">
+          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center space-x-3 group outline-none relative z-[110]">
             <div className="p-2.5 bg-brand-600/10 dark:bg-brand-400/20 rounded-xl group-hover:bg-brand-600/20 dark:group-hover:bg-brand-400/30 transition-all duration-500 group-hover:rotate-[-5deg] dark:shadow-glow-brand">
               <Shield className="w-6 h-6 text-brand-600 dark:text-brand-400" />
             </div>
@@ -156,6 +151,7 @@ export const Layout: React.FC = () => {
                     <Link
                       key={item.path}
                       to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className={clsx(
                         'flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all',
                         isActive 
