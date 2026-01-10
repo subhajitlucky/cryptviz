@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Shield, Github, ArrowRight, ExternalLink } from 'lucide-react';
+import { Shield, Github, ArrowRight, ExternalLink, ArrowUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { ThemeToggle } from './ThemeToggle';
@@ -96,11 +96,11 @@ export const Layout: React.FC = () => {
         <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.08] pointer-events-none" 
              style={{ backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-12 md:mb-20">
             
             {/* Branding Column */}
-            <div className="md:col-span-5 space-y-8">
+            <div className="md:col-span-5 space-y-6 md:space-y-8">
               <Link to="/" className="flex items-center space-x-3 group">
                 <div className="p-2 bg-brand-500 rounded-xl text-white dark:shadow-glow-brand">
                   <Shield className="w-6 h-6" />
@@ -109,7 +109,7 @@ export const Layout: React.FC = () => {
                   CryptViz
                 </span>
               </Link>
-              <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed max-w-md font-medium">
+              <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg leading-relaxed max-w-md font-medium">
                 The definitive visual guide to the mathematical primitives of the secure web. Built for pioneers of digital trust.
               </p>
               <div className="flex gap-4">
@@ -124,12 +124,12 @@ export const Layout: React.FC = () => {
 
             {/* Platform Links */}
             <div className="md:col-span-3">
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Platform Architecture</h4>
-              <ul className="space-y-4">
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 md:mb-8">Platform Architecture</h4>
+              <ul className="flex flex-wrap gap-x-8 gap-y-4 md:flex-col md:gap-4">
                 {navItems.map((item) => (
                   <li key={item.path}>
-                    <Link to={item.path} className="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition-all flex items-center group">
-                      <ArrowRight className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" />
+                    <Link to={item.path} className="text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 font-bold transition-all flex items-center group text-sm md:text-base">
+                      <ArrowRight className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all hidden md:block" />
                       {item.label}
                     </Link>
                   </li>
@@ -139,13 +139,13 @@ export const Layout: React.FC = () => {
 
             {/* Resources/Legal */}
             <div className="md:col-span-4">
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Protocol Details</h4>
-              <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
-                  <div className="flex items-center justify-between text-xs">
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6 md:mb-8">Protocol Details</h4>
+              <div className="p-5 md:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between text-[10px] md:text-xs">
                       <span className="text-slate-400 font-bold uppercase">Simulation Engine</span>
                       <span className="text-emerald-500 font-black tracking-widest uppercase">v1.0.4 Stable</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between text-[10px] md:text-xs">
                       <span className="text-slate-400 font-bold uppercase">License</span>
                       <span className="text-slate-900 dark:text-white font-black tracking-widest uppercase">MIT Open Source</span>
                   </div>
@@ -159,13 +159,24 @@ export const Layout: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-12 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+          <div className="pt-8 md:pt-12 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-center md:text-left relative">
             <p>
               &copy; 2026 CRYPTVIZ ENGINE. ALL MATHEMATICAL RIGHTS RESERVED.
             </p>
-            <div className="flex gap-8">
-                <a href="#" className="hover:text-brand-500 transition-colors">Privacy Protocol</a>
-                <a href="#" className="hover:text-brand-500 transition-colors">Terms of Service</a>
+            
+            <div className="flex items-center gap-8">
+                <div className="flex gap-6 md:gap-8">
+                    <a href="#" className="hover:text-brand-500 transition-colors">Privacy Protocol</a>
+                    <a href="#" className="hover:text-brand-500 transition-colors">Terms of Service</a>
+                </div>
+                
+                <button 
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="md:hidden p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-brand-500 transition-all active:scale-90"
+                  aria-label="Back to top"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
             </div>
           </div>
         </div>
