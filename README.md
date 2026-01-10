@@ -18,7 +18,11 @@ A visual-first interactive microsite that teaches Cryptography Fundamentals with
 
 ### Installation
 
-1. Clone the repository.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/subhajitlucky/cryptviz.git
+   cd cryptviz
+   ```
 2. Install dependencies:
    ```bash
    npm install

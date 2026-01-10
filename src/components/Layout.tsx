@@ -87,7 +87,7 @@ export const Layout: React.FC = () => {
 
             <div className="flex items-center space-x-2 md:space-x-4">
               <a
-                href="https://github.com"
+                href="https://github.com/subhajitlucky/cryptviz"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:flex p-2 text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white transition-colors"
@@ -172,7 +172,7 @@ export const Layout: React.FC = () => {
                 <div className="pt-8 mt-8 border-t border-slate-100 dark:border-white/5">
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Community</div>
                   <a
-                    href="https://github.com"
+                    href="https://github.com/subhajitlucky/cryptviz"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-4 px-6 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
@@ -225,7 +225,7 @@ export const Layout: React.FC = () => {
                 The definitive visual guide to the mathematical primitives of the secure web. Built for pioneers of digital trust.
               </p>
               <div className="flex gap-4">
-                  <a href="#" className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition-all group">
+                  <a href="https://github.com/subhajitlucky/cryptviz" target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition-all group">
                       <Github className="w-5 h-5 text-slate-400 group-hover:text-brand-500" />
                   </a>
                   <a href="#" className="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-brand-500 transition-all group">
