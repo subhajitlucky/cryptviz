@@ -110,72 +110,91 @@ export const Layout: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Overlay */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="fixed inset-0 bg-slate-950/40 backdrop-blur-md z-[100] md:hidden"
-              />
-              <motion.div
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed inset-y-0 right-0 w-full max-w-xs bg-white dark:bg-slate-950 shadow-2xl z-[105] md:hidden flex flex-col border-l border-slate-200 dark:border-white/10"
-              >
-                <div className="flex-grow flex flex-col pt-24 px-6 space-y-4">
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Navigation</div>
-                  {navItems.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className={clsx(
-                          'flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all',
-                          isActive 
-                            ? 'bg-brand-600/10 text-brand-600 dark:bg-brand-400/10 dark:text-brand-400' 
-                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
-                        )}
-                      >
-                        {item.label}
-                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
-                      </Link>
-                    );
-                  })}
-                  
-                  <div className="pt-8 mt-8 border-t border-slate-100 dark:border-white/5">
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Community</div>
-                    <a
-                      href="https://github.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-4 px-6 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
-                    >
-                      <Github className="w-5 h-5" />
-                      <span className="text-sm font-black uppercase tracking-widest">Repository</span>
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="p-8 mt-auto">
-                    <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-                        <div className="flex items-center gap-3 text-[10px] text-rose-500 font-black uppercase tracking-tighter">
-                            <Shield className="w-4 h-4" />
-                            <span>Strictly Educational</span>
-                        </div>
-                    </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
       </header>
+
+      {/* Mobile Navigation Overlay - Moved out of header for better stacking */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-slate-950/60 backdrop-blur-xl z-[200] md:hidden"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 right-0 w-full max-w-xs bg-white dark:bg-slate-900 shadow-2xl z-[210] md:hidden flex flex-col border-l border-slate-200 dark:border-white/10"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-brand-500 rounded-lg text-white">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  <span className="font-black text-xl tracking-tighter text-slate-900 dark:text-white uppercase">
+                    CryptViz
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors"
+                  aria-label="Close Menu"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex-grow flex flex-col py-6 px-6 space-y-2 overflow-y-auto">
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Navigation</div>
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={clsx(
+                        'flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all',
+                        isActive 
+                          ? 'bg-brand-600/10 text-brand-600 dark:bg-brand-400/10 dark:text-brand-400' 
+                          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
+                      )}
+                    >
+                      {item.label}
+                      {isActive && <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+                    </Link>
+                  );
+                })}
+                
+                <div className="pt-8 mt-8 border-t border-slate-100 dark:border-white/5">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Community</div>
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-4 px-6 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
+                  >
+                    <Github className="w-5 h-5" />
+                    <span className="text-sm font-black uppercase tracking-widest">Repository</span>
+                  </a>
+                </div>
+              </div>
+              
+              <div className="p-8 mt-auto">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+                      <div className="flex items-center gap-3 text-[10px] text-rose-500 font-black uppercase tracking-tighter">
+                          <Shield className="w-4 h-4" />
+                          <span>Strictly Educational</span>
+                      </div>
+                  </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <main className="flex-grow flex flex-col relative">
         <div className="relative z-10 flex-grow flex flex-col">
