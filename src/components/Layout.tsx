@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Shield, Github, ArrowRight, ExternalLink, ArrowUp } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Shield, Github, ArrowRight, ExternalLink, ArrowUp, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -15,6 +15,24 @@ const ScrollToTop = () => {
 
 export const Layout: React.FC = () => {
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const navItems = [
     { path: '/', label: 'Home' },
@@ -30,7 +48,7 @@ export const Layout: React.FC = () => {
       <header className="sticky top-0 z-[100] w-full border-b border-slate-200/50 dark:border-white/10 bg-white/70 dark:bg-slate-950/80 backdrop-blur-2xl transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
-          <Link to="/" className="flex items-center space-x-3 group outline-none">
+          <Link to="/" className="flex items-center space-x-3 group outline-none relative z-[110]">
             <div className="p-2.5 bg-brand-600/10 dark:bg-brand-400/20 rounded-xl group-hover:bg-brand-600/20 dark:group-hover:bg-brand-400/30 transition-all duration-500 group-hover:rotate-[-5deg] dark:shadow-glow-brand">
               <Shield className="w-6 h-6 text-brand-600 dark:text-brand-400" />
             </div>
@@ -39,7 +57,7 @@ export const Layout: React.FC = () => {
             </span>
           </Link>
 
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4 md:space-x-8">
             <nav className="hidden md:flex items-center space-x-1 p-1 bg-slate-900/5 dark:bg-white/5 rounded-2xl border border-slate-900/5 dark:border-white/5">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -67,21 +85,96 @@ export const Layout: React.FC = () => {
               })}
             </nav>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white transition-colors"
+                className="hidden sm:flex p-2 text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
-              <div className="w-px h-6 bg-slate-200 dark:bg-slate-800" />
+              <div className="hidden sm:block w-px h-6 bg-slate-200 dark:bg-slate-800" />
               <ThemeToggle />
+              
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors relative z-[110]"
+                aria-label="Toggle Menu"
+              >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Overlay */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="fixed inset-0 bg-slate-950/40 backdrop-blur-md z-[100] md:hidden"
+              />
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed inset-y-0 right-0 w-full max-w-xs bg-white dark:bg-slate-950 shadow-2xl z-[105] md:hidden flex flex-col border-l border-slate-200 dark:border-white/10"
+              >
+                <div className="flex-grow flex flex-col pt-24 px-6 space-y-4">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Navigation</div>
+                  {navItems.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={clsx(
+                          'flex items-center justify-between px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all',
+                          isActive 
+                            ? 'bg-brand-600/10 text-brand-600 dark:bg-brand-400/10 dark:text-brand-400' 
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'
+                        )}
+                      >
+                        {item.label}
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />}
+                      </Link>
+                    );
+                  })}
+                  
+                  <div className="pt-8 mt-8 border-t border-slate-100 dark:border-white/5">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 px-4">Community</div>
+                    <a
+                      href="https://github.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-4 px-6 py-4 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
+                    >
+                      <Github className="w-5 h-5" />
+                      <span className="text-sm font-black uppercase tracking-widest">Repository</span>
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="p-8 mt-auto">
+                    <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+                        <div className="flex items-center gap-3 text-[10px] text-rose-500 font-black uppercase tracking-tighter">
+                            <Shield className="w-4 h-4" />
+                            <span>Strictly Educational</span>
+                        </div>
+                    </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="flex-grow flex flex-col relative">
